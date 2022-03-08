@@ -48,6 +48,7 @@ job "hoover" {
         args = ["bash", "/local/startup.sh"]
         volumes = [
           ${hoover_search_repo}
+          "{% raw %}${meta.liquid_collections}{% endraw %}:/opt/hoover/collections",
         ]
         port_map {
           http = 8080
@@ -134,6 +135,8 @@ job "hoover" {
           {{- range service "hoover-search-rabbitmq" }}
             SEARCH_AMQP_URL = "amqp://{{.Address}}:{{.Port}}"
           {{- end }}
+          TUS_UPLOAD_DIR = ${config.hoover_tus_upload_dir}
+          TUS_DESTINATION_DIR = ${config.hoover_tus_files_dir}
         EOF
         destination = "local/hoover.env"
         env = true
